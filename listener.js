@@ -38,49 +38,7 @@ module.exports = function(app) {
    **/
   app.post('/recruit/v1', function(req, res) {
     var newRecruit = req.body;
-    console.log(inspect(newRecruit, {
-      color: true,
-      depth: Infinity
-    }));
 
-    var recruitJSONSchema = {
-      "id": "/recruit",
-      "type": "object",
-      "properties": {
-        "_id": {"type": "string"},
-        "alt_email": {"type": "string"},
-        "forename": {"type": "string"},
-        "phone": {"type": "string"},
-        "properties": {
-          "properties": {
-            "recruiter": {
-              "type": "array",
-              "items": {
-                "comments": {"type": "string"},
-                "date_met": {"type": "string"},
-                "email": {"type": "string"},
-                "event_name": {"type": "string"}
-              }
-            }
-          }
-        },
-        "surname": {"type": "string"}
-      }
-    };
-
-    var test = {
-      "_id": "TESTING",
-      "alt_email": "TESTING",
-      "forename": "TESTING",
-      "phone": "TESTING",
-      "recruiter": [{
-        "comments": "TESTING",
-        "date_met": "TESTING",
-        "email": "TESTING",
-        "event_name": "TESTING"
-      }],
-      "surname": "TESTING"
-    };
     // console.log(validate(newRecruit, recruitJSONSchema));
     // console.log("JSON Validator: " +  inspect(v.validate(newRecruit, recruitJSONSchema), { depth: null }));
     // check if there is an email (_id) already registered in the database
@@ -103,7 +61,7 @@ module.exports = function(app) {
           // find a way to add a new recruiters object into the JSON object
           console.log("This _id was already insterted in the database");
           console.log("Updating the documnet");
-          res.status(400).json(createJsonError(400, '_id', 'That _id was already in the database.')); // temp
+          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
           console.log("-------------------------------------------------------------------------------");
           // db.collection('recruits').update
         } else {
@@ -244,11 +202,6 @@ module.exports = function(app) {
    **/
   app.post('/event/v1', function(req, res) {
     var newEvent = req.body;
-    console.log(inspect(newEvent, {
-      color: true,
-      depth: Infinity
-    }));
-
     // check if there is an email (_id) already registered in the database
     var eventName = newEvent._id;
 
@@ -262,7 +215,6 @@ module.exports = function(app) {
       collection.insert(newEvent, function(err, objects) {
         if (err) {
           console.warn(err.message);
-          res.status(503).json(createJsonError(503, '', err.message));
         }
         if (err && err.message.indexOf('E11000 ') !== -1) {
           // this _id was already inserted in the database
@@ -270,10 +222,13 @@ module.exports = function(app) {
           console.log("This _id was already insterted in the database");
           console.log("Updating the documnet");
           // Implement where the event will be updated to add the new recruiter to the array of recruiters
-          res.status(400).json(createJsonError(400, '_id', 'That _id was already in the database.'));
+          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
+          console.log("-------------------------------------------------------------------------------");
+
         } else {
           console.log("The documents with the _id: " + eventName + " was added to the database");
-          res.status(200).send(newEvent);
+          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " was added to the database"));
+          console.log("-------------------------------------------------------------------------------");
         }
         db.close();
         res.end();

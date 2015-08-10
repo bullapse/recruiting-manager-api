@@ -1,0 +1,13 @@
+{
+    "_id": "Name of the Event 2017",
+    "details": "Details of the Event",
+    "end_date": "EndDate",
+    "start_date": "start_date",
+    "location": "location",
+    "name": "Name of the Event",
+    "recruiter": [
+        {
+            "email": "The Recruiters Email"
+        }
+    ]
+}

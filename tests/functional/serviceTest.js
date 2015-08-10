@@ -125,16 +125,18 @@ describe('myRecruitmentService', function() {
     describe('GET', function() {
       it('Should filter a search based on _id', function() {
         agent
-        .get('/recruit/v1?event=TESTING')
+        .get('/event/v1?event=TESTING')
         .expect(res.body[0])
         .type('json')
         .end(function(err, res) {
           if (err) throw err;
         });
       });
-      it('Should filter a search based on end_date');
-      it('Should filter a search based on start_date');
-      it('Should filter a search based on location');
+      it('Should filter a search based on location', function() {
+        agent
+        .get('/event/v1?location')
+        .expect
+      });
       it('Should return one JSON object if given an _id');
       it('Should return an array of JSON objects if not given _id');
       it('Should return an Error JSON object if there was a Database connectino problem');
