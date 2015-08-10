@@ -1,0 +1,378 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "myRecruitment API v1",
+    "description": "Add new recruits to our mongoDB using this API",
+    "version": "1.0.0"
+  },
+  "host": "api.target.com",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/event/v1": {
+      "get": {
+        "summary": "Recruiting Events",
+        "description": "Returns all events that have been enterned into the database as an array.",
+        "parameters": [{
+          "name": "_id",
+          "in": "query",
+          "description": "Event that matches name",
+          "type": "string"
+        }, {
+          "name": "end_date",
+          "in": "query",
+          "description": "Event that matches name",
+          "type": "string"
+        }, {
+          "name": "start_date",
+          "in": "query",
+          "description": "Event that matches name",
+          "type": "string"
+        }, {
+          "name": "location",
+          "in": "query",
+          "description": "Event at a given location",
+          "type": "string"
+        }],
+        "tags": [
+          "Event"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array events",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Create a new Event",
+        "description": "Put a new JSON object that resembles a new event in the database",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [{
+          "name": "event_name",
+          "in": "body",
+          "description": "JSON object that resembles a new event",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreateEvent"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "A succus message and status",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/event/v1/recruiters": {
+      "get": {
+        "summary": "Recruiters at Event",
+        "description": "Returns all Recruiters",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [{
+            "name": "_id",
+            "in": "query",
+            "description": "Returns the event that matches the '_id'",
+            "type": "string"
+          },
+
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of price estimates by product",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Recruiters"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/recruit/v1": {
+      "get": {
+        "summary": "recruits",
+        "description": "Returns recruits",
+        "parameters": [{
+          "name": "event",
+          "in": "query",
+          "type": "string",
+          "description": "Name of the event"
+        }, {
+          "name": "_id",
+          "in": "query",
+          "type": "string",
+          "description": "Email of the recruit"
+        }, {
+          "name": "recruiter",
+          "in": "query",
+          "type": "string",
+          "description": "Email of the recruiter"
+        }, {
+          "name": "surname",
+          "in": "query",
+          "type": "string",
+          "description": "Recruit's surname"
+        }, {
+          "name": "forename",
+          "in": "query",
+          "type": "string",
+          "description": "Recruit's forename"
+        }, {
+          "name": "phone",
+          "in": "query",
+          "type": "string",
+          "description": "Recruit's recruiter"
+        }],
+        "tags": [
+          "Recruit"
+        ],
+        "responses": {
+          "200": {
+            "description": "Recruits",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Recruit"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Add a new Recuit",
+        "description": "Put a new JSON object that resembles a new recruit in the database",
+        "tags": [
+          "Recruit"
+        ],
+        "parameters": [{
+          "name": "",
+          "in": "body",
+          "description": "JSON object that resembles a new recruit",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Recruit"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "A succus message and status",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Event": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Name of the Event"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Event."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Time at which the event will start"
+        },
+        "end_date": {
+          "type": "string",
+          "description": "Time at which the event will end"
+        },
+        "location": {
+          "type": "string",
+          "description": "Where the event it located"
+        },
+        "details": {
+          "type": "string",
+          "description": "Extra details about the event"
+        },
+        "recruiter": {
+          "type": "array",
+          "description": "Array of Recruiters",
+          "items": {
+            "$ref": "#/definitions/RecruiterEmail"
+          }
+        }
+      }
+    },
+    "RecruiterEmail": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email of the recruiter"
+        }
+      }
+    },
+    "Recruit": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "email"
+        },
+        "forename": {
+          "type": "string",
+          "description": "First name of the Uber user."
+        },
+        "surname": {
+          "type": "string",
+          "description": "Last name of the Uber user."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Email address of the Uber user"
+        },
+        "recruiter": {
+          "type": "array",
+          "description": "Each instance met with a recruiter",
+          "items": {
+            "$ref": "#/definitions/RecruiterInstance"
+          }
+        },
+        "alt_email": {
+          "type": "string",
+          "description": "Alternate email that can be provided by the recruit"
+        },
+        "contact_status": {
+          "type": "string",
+          "description": "Email address of the Uber user"
+        }
+
+      }
+    },
+    "RecruiterInstance": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "email of recruiter"
+        },
+        "date_met": {
+          "type": "string",
+          "description": "time at which the recruiter was met"
+        },
+        "comments": {
+          "type": "string",
+          "description": "notes from recruiter"
+        },
+        "event_name": {
+          "type": "string",
+          "description": "name of the event where the recruit was met"
+        }
+      }
+    },
+    "Recruiters": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "email of the recruiter"
+        }
+      }
+    },
+    "CreateEvent": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Name of the Event"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Event."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Time at which the event will start"
+        },
+        "end_date": {
+          "type": "string",
+          "description": "Time at which the event will end"
+        },
+        "location": {
+          "type": "string",
+          "description": "Where the event it located"
+        },
+        "details": {
+          "type": "string",
+          "description": "Extra details about the event"
+        }
+      }
+    },
+    "Success": {
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
