@@ -25,6 +25,18 @@ var recruitJSONString = JSON.stringify({
   "surname": "TESTING"
 });
 
+var eventJSONString = JSON.stringify({
+  "_id": "TESTING",
+  "details": "TESTING",
+  "end_date": "TESTING",
+  "start_date": "TESTING",
+  "location": "TESTING",
+  "name": "TESTING",
+  "recruiter": [{
+    "email": "TESTING"
+  }]
+});
+
 var createJsonError = function(code, fields, message) {
   var jsonError = {
     code: code,
@@ -43,104 +55,125 @@ var createJsonSuccess = function(status, message) {
 };
 
 describe('myRecruitmentService', function() {
-  it('Should be up', function() {
+  it('Should be up', function(done) {
     describe('recruit', function() {
-      agent.get('/').expect(200).expect("Hello").end(function(err, res) {});
+      agent.get('/')
+        .expect(200)
+        .expect("Hello")
+        .end(function(err, res) {
+          done();
+        });
     });
   });
 
   describe('/recruit/v1', function() {
     describe('POST', function() {
-
-      var jsonString = JSON.stringify(testBody);
-      it('Should handle a POST request with JSON body in the following format', function() {
+      it('Should handle a POST request with JSON body in the following format', function(done) {
         agent
           .post('/recruit/v1')
-          .type('json')
           .send(recruitJSONString)
           .end(function(err, res) {
             if (err) throw err;
+            done();
           });
       });
     });
     describe('GET', function() {
-      it('Should filter a search based on _id', function() {
+      it('Should filter a search based on _id', function(done) {
         agent
-        .get('/recruit/v1?_id=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res){
-          if (err) throw err;
-        });
+          .get('/recruit/v1?_id=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should filter a search based on recruiter', function() {
+      it('Should filter a search based on recruiter', function(done) {
         agent
-        .get('/recruit/v1?recruiter=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res){
-          if (err) throw err;
-        });
+          .get('/recruit/v1?recruiter=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should filter a search based on surname', function() {
+      it('Should filter a search based on surname', function(done) {
         agent
-        .get('/recruit/v1?surname=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res){
-          if (err) throw err;
-        });
+          .get('/recruit/v1?surname=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should filter a search based on forename', function() {
+      it('Should filter a search based on forename', function(done) {
         agent
-        .get('/recruit/v1?forename=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res){
-          if (err) throw err;
-        });
+          .get('/recruit/v1?forename=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should filter a search based on phone', function() {
+      it('Should filter a search based on phone', function(done) {
         agent
-        .get('/recruit/v1?phone=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res){
-          if (err) throw err;
-        });
+          .get('/recruit/v1?phone=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should return a return an array of results at a given event', function() {
+      it('Should return a return an array of results at a given event', function(done) {
         agent
-        .get('/recruit/v1?event=TESTING')
-        .expect(res.body[0].recruitJSONString)
-        .type('json')
-        .end(function(err, res) {
-          if (err) throw err;
-        });
+          .get('/recruit/v1?event=TESTING')
+          .expect(recruitJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
     });
   });
 
   describe('event/v1', function() {
     describe('GET', function() {
-      it('Should filter a search based on _id', function() {
+      it('Should filter a search based on _id', function(done) {
         agent
-        .get('/event/v1?event=TESTING')
-        .expect(res.body[0])
-        .type('json')
-        .end(function(err, res) {
-          if (err) throw err;
-        });
+          .get('/event/v1?event=TESTING')
+          .expect(eventJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should filter a search based on location', function() {
+      it('Should filter a search based on location', function(done) {
         agent
-        .get('/event/v1?location')
-        .expect
+          .get('event/v1?location=TESTING')
+          .expect(eventJSONString)
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
       });
-      it('Should return one JSON object if given an _id');
-      it('Should return an array of JSON objects if not given _id');
-      it('Should return an Error JSON object if there was a Database connectino problem');
+      it('Should return an array of JSON objects if not given a parameter', function(done) {
+        agent
+          .get('event/v1')
+          .type('json')
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
+      });
+      it('Should return an Error JSON object if there was a Database connection problem', function(done) {
+        agent
+          .get('event/v1')
+          .expect(createJsonErrorcreateJsonError(503, 'mongodb_connection', "There was an error connecting to the database"))
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
+      });
     });
   });
-
 });
