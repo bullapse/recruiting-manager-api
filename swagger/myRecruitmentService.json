@@ -67,7 +67,7 @@
           "Event"
         ],
         "parameters": [{
-          "name": "event_name",
+          "name": "CreateEvent",
           "in": "body",
           "description": "JSON object that resembles a new event",
           "required": true,
