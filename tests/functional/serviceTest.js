@@ -5,13 +5,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var app = express();
-app.use(bodyParser.json);
+app.use(bodyParser.json());
 
 require('./../../listener')(app);
 
 var agent = request.agent(app);
 
-var recruitJSONString = JSON.stringify({
+var recruitJSONString = JSON.stringify([{
   "_id": "TESTING",
   "alt_email": "TESTING",
   "forename": "TESTING",
@@ -23,9 +23,8 @@ var recruitJSONString = JSON.stringify({
     "event_name": "TESTING"
   }],
   "surname": "TESTING"
-});
-
-var eventJSONString = JSON.stringify({
+}]);
+var eventJSONString = JSON.stringify([{
   "_id": "TESTING",
   "details": "TESTING",
   "end_date": "TESTING",
@@ -35,7 +34,7 @@ var eventJSONString = JSON.stringify({
   "recruiter": [{
     "email": "TESTING"
   }]
-});
+}]);
 
 var createJsonError = function(code, fields, message) {
   var jsonError = {
@@ -140,7 +139,7 @@ describe('myRecruitmentService', function() {
     describe('GET', function() {
       it('Should filter a search based on _id', function(done) {
         agent
-          .get('/event/v1?event=TESTING')
+          .get('/event/v1?_id=TESTING')
           .expect(eventJSONString)
           .end(function(err, res) {
             if (err) throw err;

@@ -1,4 +1,4 @@
-{
+[{
   "_id": "TESTING",
   "alt_email": "TESTING",
   "forename": "TESTING",
@@ -8,6 +8,5 @@
     "date_met": "TESTING",
     "email": "TESTING",
     "event_name": "TESTING"
-  }],
-  "surname": "TESTING"
-}
+  }]
+}]

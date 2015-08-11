@@ -1,4 +1,4 @@
-{
+[{
     "_id": "Name of the Event 2017",
     "details": "Details of the Event",
     "end_date": "EndDate",
@@ -10,4 +10,4 @@
             "email": "The Recruiters Email"
         }
     ]
-}
+}]

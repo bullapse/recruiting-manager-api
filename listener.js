@@ -1,7 +1,6 @@
 var MongoClient = require('mongodb');
 var inspect = require('util').inspect;
 var assert = require('assert');
-var validate = require('jsonschema').validate;
 
 
 
@@ -42,13 +41,12 @@ module.exports = function(app) {
     // console.log(validate(newRecruit, recruitJSONSchema));
     // console.log("JSON Validator: " +  inspect(v.validate(newRecruit, recruitJSONSchema), { depth: null }));
     // check if there is an email (_id) already registered in the database
-    console.log(validate("this", {"type": "integer"}));
     var email = newRecruit._id;
 
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
         console.warn(err);
-        res.status(503).send(err);
+        res.status(503).send(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"));
       }
       var collection = db.collection('recruit');
 
@@ -59,15 +57,15 @@ module.exports = function(app) {
         if (err && err.message.indexOf('E11000 ') !== -1) {
           // this _id was already inserted in the database
           // find a way to add a new recruiters object into the JSON object
-          console.log("This _id was already insterted in the database");
-          console.log("Updating the documnet");
+          // console.log("This _id was already insterted in the database");
+          // console.log("Updating the documnet");
           res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-          console.log("-------------------------------------------------------------------------------");
+          // console.log("-------------------------------------------------------------------------------");
           // db.collection('recruits').update
         } else {
-          console.log("The documents with the _id: " + email + " was added to the database");
+          // console.log("The documents with the _id: " + email + " was added to the database");
           res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + email + " was added to the database"));
-          console.log("-------------------------------------------------------------------------------");
+          // console.log("-------------------------------------------------------------------------------");
         }
         res.end();
         db.close();
@@ -89,7 +87,7 @@ module.exports = function(app) {
     var forename = req.query.forename;
     var phone = req.query.phone;
 
-    console.log("         _id: " + _id);
+    // console.log("         _id: " + _id);
 
 
 
@@ -107,10 +105,10 @@ module.exports = function(app) {
       if (!!surname) queryObject.surname = surname;
       if (!!forename) queryObject.forename = forename;
       if (!!phone) queryObject.phone = phone;
-      console.log(inspect(queryObject, {
-        depth: Infinity,
-        color: true
-      }));
+      // console.log(inspect(queryObject, {
+      //   depth: Infinity,
+      //   color: true
+      // }));
 
 
       // get the event documents
@@ -118,9 +116,9 @@ module.exports = function(app) {
       // Find some documents
       collection.find(queryObject).toArray(function(err, docs) {
         assert.equal(err, null);
-        console.log("Found the following records");
+        // console.log("Found the following records");
 
-        console.log("----------------------------------------------------------");
+        // console.log("----------------------------------------------------------");
         res.status(200).json(docs);
         res.end();
       });
@@ -142,11 +140,11 @@ module.exports = function(app) {
     var location = req.query.location;
     var name = req.query.name;
 
-    console.log("         _id: " + _id);
-    console.log("    end_date: " + end_date);
-    console.log("  start_date: " + start_date);
-    console.log("        name: " + start_date);
-    console.log("    location: " + location + "\n");
+    // console.log("         _id: " + _id);
+    // console.log("    end_date: " + end_date);
+    // console.log("  start_date: " + start_date);
+    // console.log("        name: " + start_date);
+    // console.log("    location: " + location + "\n");
 
 
 
@@ -163,10 +161,10 @@ module.exports = function(app) {
       if (!!start_date) queryObject.start_date = start_date;
       if (!!location) queryObject.location = location;
       if (!!name) queryObject.name = name;
-      console.log(inspect(queryObject, {
-        depth: Infinity,
-        color: true
-      }));
+      // console.log(inspect(queryObject, {
+      //   depth: Infinity,
+      //   color: true
+      // }));
 
 
       // get the event documents
@@ -174,9 +172,9 @@ module.exports = function(app) {
       // Find some documents
       collection.find(queryObject).toArray(function(err, docs) {
         assert.equal(err, null);
-        console.log("Found the following records");
+        // console.log("Found the following records");
 
-        console.log("----------------------------------------------------------");
+        // console.log("----------------------------------------------------------");
         res.status(200).json(docs);
         res.end();
       });
@@ -219,16 +217,16 @@ module.exports = function(app) {
         if (err && err.message.indexOf('E11000 ') !== -1) {
           // this _id was already inserted in the database
           // find a way to add a new recruiters object into the JSON object
-          console.log("This _id was already insterted in the database");
-          console.log("Updating the documnet");
+          // console.log("This _id was already insterted in the database");
+          // console.log("Updating the documnet");
           // Implement where the event will be updated to add the new recruiter to the array of recruiters
           res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-          console.log("-------------------------------------------------------------------------------");
+          // console.log("-------------------------------------------------------------------------------");
 
         } else {
-          console.log("The documents with the _id: " + eventName + " was added to the database");
+          // console.log("The documents with the _id: " + eventName + " was added to the database");
           res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " was added to the database"));
-          console.log("-------------------------------------------------------------------------------");
+          // console.log("-------------------------------------------------------------------------------");
         }
         db.close();
         res.end();
@@ -242,10 +240,10 @@ module.exports = function(app) {
     var start_date = req.query.start_date;
     var location = req.query.location;
 
-    console.log("         _id: " + _id);
-    console.log("    end_date: " + end_date);
-    console.log("  start_date: " + start_date);
-    console.log("    location: " + location + "\n");
+    // console.log("         _id: " + _id);
+    // console.log("    end_date: " + end_date);
+    // console.log("  start_date: " + start_date);
+    // console.log("    location: " + location + "\n");
 
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
@@ -258,10 +256,10 @@ module.exports = function(app) {
       if (!!_id) {
         queryObject._id = _id;
 
-        console.log(inspect(queryObject, {
-          depth: Infinity,
-          color: true
-        }));
+        // console.log(inspect(queryObject, {
+        //   depth: Infinity,
+        //   color: true
+        // }));
 
 
         // get the event documents
@@ -269,11 +267,11 @@ module.exports = function(app) {
         // Find some documents
         collection.find(queryObject).toArray(function(err, docs) {
           assert.equal(err, null);
-          console.log("Found the following records");
-          console.log(require('util').inspect(docs[0].recruiter, {
-            depth: null
-          }));
-          console.log("----------------------------------------------------------");
+          // console.log("Found the following records");
+          // console.log(require('util').inspect(docs[0].recruiter, {
+          //   depth: null
+          // }));
+          // console.log("----------------------------------------------------------");
           res.status(200).json(docs[0].recruiter);
           res.end();
         });
