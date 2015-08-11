@@ -47,29 +47,30 @@ module.exports = function(app) {
       if (err) {
         console.warn(err);
         res.status(503).send(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"));
-      }
-      var collection = db.collection('recruit');
+      } else {
+        var collection = db.collection('recruit');
 
-      collection.save(newRecruit, function(err, objects) {
-        if (err) {
-          console.warn(err.message);
-        }
-        if (err && err.message.indexOf('E11000 ') !== -1) {
-          // this _id was already inserted in the database
-          // find a way to add a new recruiters object into the JSON object
-          // console.log("This _id was already insterted in the database");
-          // console.log("Updating the documnet");
-          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-          // console.log("-------------------------------------------------------------------------------");
-          // db.collection('recruits').update
-        } else {
-          // console.log("The documents with the _id: " + email + " was added to the database");
-          res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + email + " was added to the database"));
-          // console.log("-------------------------------------------------------------------------------");
-        }
-        res.end();
-        db.close();
-      });
+        collection.save(newRecruit, function(err, objects) {
+          if (err) {
+            console.warn(err.message);
+          }
+          if (err && err.message.indexOf('E11000 ') !== -1) {
+            // this _id was already inserted in the database
+            // find a way to add a new recruiters object into the JSON object
+            // console.log("This _id was already insterted in the database");
+            // console.log("Updating the documnet");
+            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
+            // console.log("-------------------------------------------------------------------------------");
+            // db.collection('recruits').update
+          } else {
+            // console.log("The documents with the _id: " + email + " was added to the database");
+            res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + email + " was added to the database"));
+            // console.log("-------------------------------------------------------------------------------");
+          }
+          res.end();
+          db.close();
+        });
+      }
     });
   });
 
@@ -94,34 +95,35 @@ module.exports = function(app) {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
         console.warn(err);
-        res.status(503).send(err);
+        res.status(503).send(createJsonError(503, '', "There was an error connecting to the database"));
+      } else {
+
+        // build query object
+        var queryObject = {};
+        if (!!_id) queryObject._id = _id;
+        if (!!event) queryObject.event = event;
+        if (!!recruiter) queryObject.recruiter = recruiter;
+        if (!!surname) queryObject.surname = surname;
+        if (!!forename) queryObject.forename = forename;
+        if (!!phone) queryObject.phone = phone;
+        // console.log(inspect(queryObject, {
+        //   depth: Infinity,
+        //   color: true
+        // }));
+
+
+        // get the event documents
+        var collection = db.collection('recruit');
+        // Find some documents
+        collection.find(queryObject).toArray(function(err, docs) {
+          assert.equal(err, null);
+          // console.log("Found the following records");
+
+          // console.log("----------------------------------------------------------");
+          res.status(200).json(docs);
+          res.end();
+        });
       }
-
-      // build query object
-      var queryObject = {};
-      if (!!_id) queryObject._id = _id;
-      if (!!event) queryObject.event = event;
-      if (!!recruiter) queryObject.recruiter = recruiter;
-      if (!!surname) queryObject.surname = surname;
-      if (!!forename) queryObject.forename = forename;
-      if (!!phone) queryObject.phone = phone;
-      // console.log(inspect(queryObject, {
-      //   depth: Infinity,
-      //   color: true
-      // }));
-
-
-      // get the event documents
-      var collection = db.collection('recruit');
-      // Find some documents
-      collection.find(queryObject).toArray(function(err, docs) {
-        assert.equal(err, null);
-        // console.log("Found the following records");
-
-        // console.log("----------------------------------------------------------");
-        res.status(200).json(docs);
-        res.end();
-      });
     });
   });
 
@@ -151,33 +153,34 @@ module.exports = function(app) {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
         console.warn(err);
-        res.status(503).send(err);
+        res.status(503).send(createJsonError(503, '', "There was an error connecting to the database"));
+      } else {
+
+        // build query object
+        var queryObject = {};
+        if (!!_id) queryObject._id = _id;
+        if (!!end_date) queryObject.end_date = end_date;
+        if (!!start_date) queryObject.start_date = start_date;
+        if (!!location) queryObject.location = location;
+        if (!!name) queryObject.name = name;
+        // console.log(inspect(queryObject, {
+        //   depth: Infinity,
+        //   color: true
+        // }));
+
+
+        // get the event documents
+        var collection = db.collection('event');
+        // Find some documents
+        collection.find(queryObject).toArray(function(err, docs) {
+          assert.equal(err, null);
+          // console.log("Found the following records");
+
+          // console.log("----------------------------------------------------------");
+          res.status(200).json(docs);
+          res.end();
+        });
       }
-
-      // build query object
-      var queryObject = {};
-      if (!!_id) queryObject._id = _id;
-      if (!!end_date) queryObject.end_date = end_date;
-      if (!!start_date) queryObject.start_date = start_date;
-      if (!!location) queryObject.location = location;
-      if (!!name) queryObject.name = name;
-      // console.log(inspect(queryObject, {
-      //   depth: Infinity,
-      //   color: true
-      // }));
-
-
-      // get the event documents
-      var collection = db.collection('event');
-      // Find some documents
-      collection.find(queryObject).toArray(function(err, docs) {
-        assert.equal(err, null);
-        // console.log("Found the following records");
-
-        // console.log("----------------------------------------------------------");
-        res.status(200).json(docs);
-        res.end();
-      });
     });
   });
 
@@ -206,31 +209,32 @@ module.exports = function(app) {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
         console.warn(err);
-        res.status(503).json(createJsonError(503, '', err.message));
+        res.status(503).json(createJsonError(503, '', "There was an error connecting to the database"));
+      } else {
+        var collection = db.collection('event');
+
+        collection.insert(newEvent, function(err, objects) {
+          if (err) {
+            console.warn(err.message);
+          }
+          if (err && err.message.indexOf('E11000 ') !== -1) {
+            // this _id was already inserted in the database
+            // find a way to add a new recruiters object into the JSON object
+            // console.log("This _id was already insterted in the database");
+            // console.log("Updating the documnet");
+            // Implement where the event will be updated to add the new recruiter to the array of recruiters
+            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
+            // console.log("-------------------------------------------------------------------------------");
+
+          } else {
+            // console.log("The documents with the _id: " + eventName + " was added to the database");
+            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " was added to the database"));
+            // console.log("-------------------------------------------------------------------------------");
+          }
+          db.close();
+          res.end();
+        });
       }
-      var collection = db.collection('event');
-
-      collection.insert(newEvent, function(err, objects) {
-        if (err) {
-          console.warn(err.message);
-        }
-        if (err && err.message.indexOf('E11000 ') !== -1) {
-          // this _id was already inserted in the database
-          // find a way to add a new recruiters object into the JSON object
-          // console.log("This _id was already insterted in the database");
-          // console.log("Updating the documnet");
-          // Implement where the event will be updated to add the new recruiter to the array of recruiters
-          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-          // console.log("-------------------------------------------------------------------------------");
-
-        } else {
-          // console.log("The documents with the _id: " + eventName + " was added to the database");
-          res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " was added to the database"));
-          // console.log("-------------------------------------------------------------------------------");
-        }
-        db.close();
-        res.end();
-      });
     });
   });
 
@@ -248,36 +252,31 @@ module.exports = function(app) {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
         console.warn(err);
-        res.status(503).send(err);
-      }
-
-      // build query object
-      var queryObject = {};
-      if (!!_id) {
-        queryObject._id = _id;
-
-        // console.log(inspect(queryObject, {
-        //   depth: Infinity,
-        //   color: true
-        // }));
-
-
-        // get the event documents
-        var collection = db.collection('event');
-        // Find some documents
-        collection.find(queryObject).toArray(function(err, docs) {
-          assert.equal(err, null);
-          // console.log("Found the following records");
-          // console.log(require('util').inspect(docs[0].recruiter, {
-          //   depth: null
-          // }));
-          // console.log("----------------------------------------------------------");
-          res.status(200).json(docs[0].recruiter);
-          res.end();
-        });
+        res.status(503).send(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"));
       } else {
-        res.status(400).json(createJsonError(400, '_id', "You didn't provied the requierd field '_id'!"));
-        res.end();
+
+        // build query object
+        var queryObject = {};
+        if (!!_id) {
+          queryObject._id = _id;
+
+          // get the event documents
+          var collection = db.collection('event');
+          // Find some documents
+          collection.find(queryObject).toArray(function(err, docs) {
+            assert.equal(err, null);
+            // console.log("Found the following records");
+            // console.log(require('util').inspect(docs[0].recruiter, {
+            //   depth: null
+            // }));
+            // console.log("----------------------------------------------------------");
+            res.status(200).json(docs[0].recruiter);
+            res.end();
+          });
+        } else {
+          res.status(400).json(createJsonError(400, '_id', "You didn't provied the requierd field '_id'!"));
+          res.end();
+        }
       }
     });
   });

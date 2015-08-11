@@ -123,15 +123,6 @@ describe('myRecruitmentService', function() {
             done();
           });
       });
-      it('Should return a return an array of results at a given event', function(done) {
-        agent
-          .get('/recruit/v1?event=TESTING')
-          .expect(recruitJSONString)
-          .end(function(err, res) {
-            if (err) throw err;
-            done();
-          });
-      });
     });
   });
 
@@ -148,7 +139,7 @@ describe('myRecruitmentService', function() {
       });
       it('Should filter a search based on location', function(done) {
         agent
-          .get('event/v1?location=TESTING')
+          .get('/event/v1?location=TESTING')
           .expect(eventJSONString)
           .end(function(err, res) {
             if (err) throw err;
@@ -157,17 +148,18 @@ describe('myRecruitmentService', function() {
       });
       it('Should return an array of JSON objects if not given a parameter', function(done) {
         agent
-          .get('event/v1')
+          .get('/event/v1')
           .type('json')
           .end(function(err, res) {
             if (err) throw err;
             done();
           });
       });
-      it('Should return an Error JSON object if there was a Database connection problem', function(done) {
+      it('Should return an Error JSON object if there was a Database connection problem (NOTE: Should fail unless mongodb is down)', function(done) {
         agent
-          .get('event/v1')
-          .expect(createJsonErrorcreateJsonError(503, 'mongodb_connection', "There was an error connecting to the database"))
+          .get('/event/v1')
+          .expect(503)
+          .expect(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"))
           .end(function(err, res) {
             if (err) throw err;
             done();
