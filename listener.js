@@ -41,7 +41,7 @@ module.exports = function(app) {
     // console.log(validate(newRecruit, recruitJSONSchema));
     // console.log("JSON Validator: " +  inspect(v.validate(newRecruit, recruitJSONSchema), { depth: null }));
     // check if there is an email (_id) already registered in the database
-    var email = newRecruit._id;
+    var _id = newRecruit._id;
 
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
@@ -49,26 +49,42 @@ module.exports = function(app) {
         res.status(503).send(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"));
       } else {
         var collection = db.collection('recruit');
+        var queryObject = {};
+        if (!!_id) queryObject._id = _id;
+        console.log(require('util').inspect(newRecruit, { depth: null }));
 
-        collection.save(newRecruit, function(err, objects) {
-          if (err) {
-            console.warn(err.message);
-          }
-          if (err && err.message.indexOf('E11000 ') !== -1) {
-            // this _id was already inserted in the database
-            // find a way to add a new recruiters object into the JSON object
-            // console.log("This _id was already insterted in the database");
-            // console.log("Updating the documnet");
-            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-            // console.log("-------------------------------------------------------------------------------");
-            // db.collection('recruits').update
+        collection.find(queryObject).toArray(function(err, docs) {
+          if (docs.length !== 0) {
+            console.log(docs.length);
+            docs[0].recruiter.push(newRecruit.recruiter); // There is something wrong here
           } else {
-            // console.log("The documents with the _id: " + email + " was added to the database");
-            res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + email + " was added to the database"));
-            // console.log("-------------------------------------------------------------------------------");
+            var recruiterArray = [];
+            recruiterArray.push(newRecruit.recruiter);
+            newRecruit.recruiter = recruiterArray;
           }
-          res.end();
-          db.close();
+          console.log("\n\nAFTER: ");
+          console.log(require('util').inspect(newRecruit, { depth: null }));
+          // Add the modified JSON object to the array
+          collection.save(newRecruit, function(err, objects) {
+            if (err) {
+              console.warn(err.message);
+            }
+            if (err && err.message.indexOf('E11000 ') !== -1) {
+              // this _id was already inserted in the database
+              // find a way to add a new recruiters object into the JSON object
+              // console.log("This _id was already insterted in the database");
+              // console.log("Updating the documnet");
+              res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
+              // console.log("-------------------------------------------------------------------------------");
+              // db.collection('recruits').update
+            } else {
+              // console.log("The documents with the _id: " + email + " was added to the database");
+              res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + _id + " was added to the database"));
+              // console.log("-------------------------------------------------------------------------------");
+            }
+            res.end();
+            db.close();
+          });
         });
       }
     });
@@ -216,6 +232,7 @@ module.exports = function(app) {
         collection.insert(newEvent, function(err, objects) {
           if (err) {
             console.warn(err.message);
+            res.status(503).json(createJsonError(503, '', "There was an error inserting the document into the database"));
           }
           if (err && err.message.indexOf('E11000 ') !== -1) {
             // this _id was already inserted in the database

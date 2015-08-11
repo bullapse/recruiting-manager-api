@@ -1,3 +1,4 @@
+/*What would be stored in the database*/
 [{
   "_id": "TESTING",
   "alt_email": "TESTING",
@@ -10,3 +11,17 @@
     "event_name": "TESTING"
   }]
 }]
+/*What would be sent from API call*/
+{
+  "_id": "TESTING",
+  "alt_email": "TESTING",
+  "forename": "TESTING",
+  "phone": "TESTING",
+  "recruiter": {
+    "comments": "TESTING",
+    "date_met": "TESTING",
+    "email": "TESTING",
+    "event_name": "TESTING"
+  },
+  "surname": "TESTING"
+}

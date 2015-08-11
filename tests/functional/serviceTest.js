@@ -11,7 +11,7 @@ require('./../../listener')(app);
 
 var agent = request.agent(app);
 
-var recruitJSONString = JSON.stringify([{
+var recruitJSONStringGET = [{
   "_id": "TESTING",
   "alt_email": "TESTING",
   "forename": "TESTING",
@@ -23,8 +23,21 @@ var recruitJSONString = JSON.stringify([{
     "event_name": "TESTING"
   }],
   "surname": "TESTING"
-}]);
-var eventJSONString = JSON.stringify([{
+}];
+var recruitJSONStringPUT = {
+  "_id": "TESTING",
+  "alt_email": "TESTING",
+  "forename": "TESTING",
+  "phone": "TESTING",
+  "recruiter": {
+    "comments": "TESTING",
+    "date_met": "TESTING",
+    "email": "TESTING",
+    "event_name": "TESTING"
+  },
+  "surname": "TESTING"
+};
+var eventJSONStringGET = [{
   "_id": "TESTING",
   "details": "TESTING",
   "end_date": "TESTING",
@@ -34,7 +47,18 @@ var eventJSONString = JSON.stringify([{
   "recruiter": [{
     "email": "TESTING"
   }]
-}]);
+}];
+var eventJSONStringPOST = {
+  "_id": "TESTING",
+  "details": "TESTING",
+  "end_date": "TESTING",
+  "start_date": "TESTING",
+  "location": "TESTING",
+  "name": "TESTING",
+  "recruiter": {
+    "email": "TESTING"
+  }
+};
 
 var createJsonError = function(code, fields, message) {
   var jsonError = {
@@ -70,7 +94,9 @@ describe('myRecruitmentService', function() {
       it('Should handle a POST request with JSON body in the following format', function(done) {
         agent
           .post('/recruit/v1')
-          .send(recruitJSONString)
+          .type('json')
+          .send(recruitJSONStringPUT)
+          .expect(createJsonSuccess(200, "The documents with the _id: " + "TESTING" + " was added to the database"))
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -81,7 +107,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on _id', function(done) {
         agent
           .get('/recruit/v1?_id=TESTING')
-          .expect(recruitJSONString)
+          .expect(recruitJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -90,7 +116,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on recruiter', function(done) {
         agent
           .get('/recruit/v1?recruiter=TESTING')
-          .expect(recruitJSONString)
+          .expect(recruitJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -99,7 +125,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on surname', function(done) {
         agent
           .get('/recruit/v1?surname=TESTING')
-          .expect(recruitJSONString)
+          .expect(recruitJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -108,7 +134,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on forename', function(done) {
         agent
           .get('/recruit/v1?forename=TESTING')
-          .expect(recruitJSONString)
+          .expect(recruitJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -117,7 +143,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on phone', function(done) {
         agent
           .get('/recruit/v1?phone=TESTING')
-          .expect(recruitJSONString)
+          .expect(recruitJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -127,11 +153,23 @@ describe('myRecruitmentService', function() {
   });
 
   describe('event/v1', function() {
+    describe('POST', function() {
+      it('Should post a new event into the database', function(done) {
+        agent
+          .put('/event/v1')
+          .send(eventJSONStringPOST)
+          .expect(createJsonSuccess(200, "The documents with the _id: " + "TESTING" + " was added to the database"))
+          .end(function(err, res) {
+            if (err) throw err;
+            done();
+          });
+      });
+    });
     describe('GET', function() {
       it('Should filter a search based on _id', function(done) {
         agent
           .get('/event/v1?_id=TESTING')
-          .expect(eventJSONString)
+          .expect(eventJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
@@ -140,7 +178,7 @@ describe('myRecruitmentService', function() {
       it('Should filter a search based on location', function(done) {
         agent
           .get('/event/v1?location=TESTING')
-          .expect(eventJSONString)
+          .expect(eventJSONStringGET)
           .end(function(err, res) {
             if (err) throw err;
             done();
