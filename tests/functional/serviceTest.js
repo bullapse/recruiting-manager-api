@@ -91,9 +91,9 @@ describe('myRecruitmentService', function() {
 
   describe('/recruit/v1', function() {
     describe('POST', function() {
-      it('Should handle a POST request with JSON body in the following format', function(done) {
+      it('Should handle a PUT request with JSON body in the following format', function(done) {
         agent
-          .post('/recruit/v1')
+          .put('/recruit/v1')
           .type('json')
           .send(recruitJSONStringPUT)
           .expect(createJsonSuccess(200, "The documents with the _id: " + "TESTING" + " was added to the database"))
@@ -153,10 +153,10 @@ describe('myRecruitmentService', function() {
   });
 
   describe('event/v1', function() {
-    describe('POST', function() {
+    describe('PUT', function() {
       it('Should post a new event into the database', function(done) {
         agent
-          .post('/event/v1')
+          .put('/event/v1')
           .send(eventJSONStringPOST)
           .expect(createJsonSuccess(200, "The documents with the _id: " + "TESTING" + " was added to the database"))
           .end(function(err, res) {

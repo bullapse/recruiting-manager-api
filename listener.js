@@ -34,7 +34,7 @@ module.exports = function(app) {
    * There was a problem with the database == 503
    * Bad Response == 400
    **/
-  app.post('/recruit/v1', function(req, res) {
+  app.put('/recruit/v1', function(req, res) {
     var newRecruit = req.body;
 
     // console.log(validate(newRecruit, recruitJSONSchema));
@@ -204,7 +204,7 @@ module.exports = function(app) {
    * There was a problem with the database == 503
    * Bad Response == 400
    **/
-  app.post('/event/v1', function(req, res) {
+  app.put('/event/v1', function(req, res) {
     var newEvent = req.body;
     // check if there is an email (_id) already registered in the database
     var _id = newEvent._id;
