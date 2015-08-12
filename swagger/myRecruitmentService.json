@@ -193,7 +193,7 @@
           "description": "JSON object that resembles a new recruit",
           "required": true,
           "schema": {
-            "$ref": "#/definitions/Recruit"
+            "$ref": "#/definitions/RecruitPost"
           }
         }],
         "responses": {
@@ -290,7 +290,38 @@
           "type": "string",
           "description": "Email address of the Uber user"
         }
-
+      }
+    },
+    "RecruitPost": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "email"
+        },
+        "forename": {
+          "type": "string",
+          "description": "First name of the Uber user."
+        },
+        "surname": {
+          "type": "string",
+          "description": "Last name of the Uber user."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Email address of the Uber user"
+        },
+        "recruiter": {
+          "description": "Each instance met with a recruiter",
+          "$ref": "#/definitions/RecruiterInstance"
+        },
+        "alt_email": {
+          "type": "string",
+          "description": "Alternate email that can be provided by the recruit"
+        },
+        "contact_status": {
+          "type": "string",
+          "description": "Email address of the Uber user"
+        }
       }
     },
     "RecruiterInstance": {
@@ -346,6 +377,10 @@
         "details": {
           "type": "string",
           "description": "Extra details about the event"
+        },
+        "recruiter": {
+          "description": "Array of recruiters at the event",
+          "$ref": "#/definitions/RecruiterEmail"
         }
       }
     },
