@@ -29,7 +29,6 @@ module.exports = function(app) {
     res.status(200).send("Hello");
     console.log("hit /");
   });
-
   /**
    * Good Response == 200
    * There was a problem with the database == 503
@@ -51,36 +50,24 @@ module.exports = function(app) {
         var collection = db.collection('recruit');
         var queryObject = {};
         if (!!_id) queryObject._id = _id;
-        console.log(require('util').inspect(newRecruit, { depth: null }));
+        // console.log(require('util').inspect(newRecruit, { depth: null }));
 
         collection.find(queryObject).toArray(function(err, docs) {
           if (docs.length !== 0) {
-            console.log(docs.length);
             docs[0].recruiter.push(newRecruit.recruiter); // There is something wrong here
+            newRecruit.recruiter = docs[0].recruiter;
           } else {
             var recruiterArray = [];
             recruiterArray.push(newRecruit.recruiter);
             newRecruit.recruiter = recruiterArray;
           }
-          console.log("\n\nAFTER: ");
-          console.log(require('util').inspect(newRecruit, { depth: null }));
           // Add the modified JSON object to the array
           collection.save(newRecruit, function(err, objects) {
             if (err) {
               console.warn(err.message);
-            }
-            if (err && err.message.indexOf('E11000 ') !== -1) {
-              // this _id was already inserted in the database
-              // find a way to add a new recruiters object into the JSON object
-              // console.log("This _id was already insterted in the database");
-              // console.log("Updating the documnet");
-              res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-              // console.log("-------------------------------------------------------------------------------");
-              // db.collection('recruits').update
+              res.status(503).json(createJsonError(503, '', "There was an error inserting the document into the database"));
             } else {
-              // console.log("The documents with the _id: " + email + " was added to the database");
               res.status(200).json(createJsonSuccess(200, "The documents with the _id: " + _id + " was added to the database"));
-              // console.log("-------------------------------------------------------------------------------");
             }
             res.end();
             db.close();
@@ -118,7 +105,7 @@ module.exports = function(app) {
         var queryObject = {};
         if (!!_id) queryObject._id = _id;
         if (!!event) queryObject.event = event;
-        if (!!recruiter) queryObject.recruiter = recruiter;
+        if (!!recruiter) queryObject.recruiter = { $elemMatch: {email: recruiter } };
         if (!!surname) queryObject.surname = surname;
         if (!!forename) queryObject.forename = forename;
         if (!!phone) queryObject.phone = phone;
@@ -220,7 +207,7 @@ module.exports = function(app) {
   app.post('/event/v1', function(req, res) {
     var newEvent = req.body;
     // check if there is an email (_id) already registered in the database
-    var eventName = newEvent._id;
+    var _id = newEvent._id;
 
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
@@ -228,28 +215,30 @@ module.exports = function(app) {
         res.status(503).json(createJsonError(503, '', "There was an error connecting to the database"));
       } else {
         var collection = db.collection('event');
+        var queryObject = {};
+        if (!!_id) queryObject._id = _id;
 
-        collection.insert(newEvent, function(err, objects) {
-          if (err) {
-            console.warn(err.message);
-            res.status(503).json(createJsonError(503, '', "There was an error inserting the document into the database"));
-          }
-          if (err && err.message.indexOf('E11000 ') !== -1) {
-            // this _id was already inserted in the database
-            // find a way to add a new recruiters object into the JSON object
-            // console.log("This _id was already insterted in the database");
-            // console.log("Updating the documnet");
-            // Implement where the event will be updated to add the new recruiter to the array of recruiters
-            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " already exist, but it was updated"));
-            // console.log("-------------------------------------------------------------------------------");
-
+        collection.find(queryObject).toArray(function(err, docs) {
+          if (docs.length !== 0) {
+            docs[0].recruiter.push(newEvent.recruiter); // There is something wrong here
+            newEvent.recruiter = docs[0].recruiter;
           } else {
-            // console.log("The documents with the _id: " + eventName + " was added to the database");
-            res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + eventName + " was added to the database"));
-            // console.log("-------------------------------------------------------------------------------");
+            var recruiterArray = [];
+            recruiterArray.push(newEvent.recruiter);
+            newEvent.recruiter = recruiterArray;
           }
-          db.close();
-          res.end();
+          // Add the modified JSON object to the array
+          collection.save(newEvent, function(err, objects) {
+            if (err) {
+              console.warn(err.message);
+              res.status(503).json(createJsonError(503, '', "There was an error inserting the document into the database"));
+            } else {
+              // console.log("The documents with the _id: " + _id + " was added to the database");
+              res.status(200).send(createJsonSuccess(200, "The documents with the _id: " + _id + " was added to the database"));
+            }
+            res.end();
+            db.close();
+          });
         });
       }
     });
