@@ -156,7 +156,7 @@ describe('myRecruitmentService', function() {
     describe('POST', function() {
       it('Should post a new event into the database', function(done) {
         agent
-          .put('/event/v1')
+          .post('/event/v1')
           .send(eventJSONStringPOST)
           .expect(createJsonSuccess(200, "The documents with the _id: " + "TESTING" + " was added to the database"))
           .end(function(err, res) {
@@ -193,16 +193,16 @@ describe('myRecruitmentService', function() {
             done();
           });
       });
-      it('Should return an Error JSON object if there was a Database connection problem (NOTE: Should fail unless mongodb is down)', function(done) {
-        agent
-          .get('/event/v1')
-          .expect(503)
-          .expect(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"))
-          .end(function(err, res) {
-            if (err) throw err;
-            done();
-          });
-      });
+      // it('Should return an Error JSON object if there was a Database connection problem (NOTE: Should fail unless mongodb is down)', function(done) {
+      //   agent
+      //     .get('/event/v1')
+      //     .expect(503)
+      //     .expect(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"))
+      //     .end(function(err, res) {
+      //       if (err) throw err;
+      //       done();
+      //     });
+      // });
     });
   });
 });
