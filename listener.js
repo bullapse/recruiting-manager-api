@@ -46,6 +46,8 @@ module.exports = function(app) {
       if (err) {
         console.warn(err);
         res.status(503).send(createJsonError(503, 'mongodb_connection', "There was an error connecting to the database"));
+        res.end();
+        db.close();
       } else {
         var collection = db.collection('recruit');
         var queryObject = {};
@@ -99,6 +101,8 @@ module.exports = function(app) {
       if (err) {
         console.warn(err);
         res.status(503).send(createJsonError(503, '', "There was an error connecting to the database"));
+        res.end();
+        db.close();
       } else {
 
         // build query object
@@ -125,6 +129,7 @@ module.exports = function(app) {
           // console.log("----------------------------------------------------------");
           res.status(200).json(docs);
           res.end();
+          db.close();
         });
       }
     });
@@ -139,6 +144,7 @@ module.exports = function(app) {
    *
    **/
   app.get('/event/v1', function(req, res) {
+    console.log("hit: /event/v1");
     var _id = req.query._id;
     var end_date = req.query.end_date;
     var start_date = req.query.start_date;
@@ -157,6 +163,8 @@ module.exports = function(app) {
       if (err) {
         console.warn(err);
         res.status(503).send(createJsonError(503, '', "There was an error connecting to the database"));
+        res.end();
+        db.close();
       } else {
 
         // build query object
@@ -177,11 +185,13 @@ module.exports = function(app) {
         // Find some documents
         collection.find(queryObject).toArray(function(err, docs) {
           assert.equal(err, null);
-          // console.log("Found the following records");
+          console.log("Found the following records");
+          console.log(docs);
 
           // console.log("----------------------------------------------------------");
           res.status(200).json(docs);
           res.end();
+          db.close();
         });
       }
     });
@@ -213,6 +223,7 @@ module.exports = function(app) {
       if (err) {
         console.warn(err);
         res.status(503).json(createJsonError(503, '', "There was an error connecting to the database"));
+        db.close();
       } else {
         var collection = db.collection('event');
         var queryObject = {};
@@ -278,10 +289,12 @@ module.exports = function(app) {
             // console.log("----------------------------------------------------------");
             res.status(200).json(docs[0].recruiter);
             res.end();
+            db.close();
           });
         } else {
           res.status(400).json(createJsonError(400, '_id', "You didn't provied the requierd field '_id'!"));
           res.end();
+          db.close();
         }
       }
     });
