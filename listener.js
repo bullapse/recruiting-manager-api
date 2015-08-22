@@ -215,9 +215,12 @@ module.exports = function(app) {
    * Bad Response == 400
    **/
   app.put('/event/v1', function(req, res) {
+    console.log('hit /event/v1 PUT');
     var newEvent = req.body;
     // check if there is an email (_id) already registered in the database
+    console.log(require('util').inspect(req.body, { depth: Infinity }));
     var _id = newEvent._id;
+    console.log("_id: " + _id);
 
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
       if (err) {
